@@ -1,0 +1,43 @@
+# Datos generados en benchmarks
+data/
+*.csv
+*.parquet
+*.jsonl
+*.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.python-version
+
+# Entornos virtuales
+.venv/
+venv/
+ENV/
+env/
+.env
+uv.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Otros
+.DS_Store
+.mypy_cache/
+.dmypy.json
+dmypy.json

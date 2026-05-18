@@ -1,0 +1,17 @@
+[project]
+name = "modulo-datos"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "duckdb>=1.5.2",
+    "fastapi>=0.136.1",
+    "httpx>=0.28.1",
+    "matplotlib>=3.10.9",
+    "pandas>=3.0.3",
+    "polars>=1.40.1",
+    "pyarrow>=24.0.0",
+    "pytest>=9.0.3",
+    "uvicorn>=0.47.0",
+]

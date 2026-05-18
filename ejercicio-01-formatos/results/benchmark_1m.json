@@ -1,0 +1,158 @@
+{
+  "size": "1m",
+  "n_rows": 1000000,
+  "generation_s": 1.754,
+  "repeats": 3,
+  "formats": {
+    "csv": {
+      "write_avg_s": 2.2111257999980203,
+      "write_min_s": 2.1851900999899954,
+      "write_max_s": 2.2262306000338867,
+      "write_runs_s": [
+        2.2262306000338867,
+        2.2219566999701783,
+        2.1851900999899954
+      ],
+      "size_bytes": 117577656,
+      "read_full_avg_s": 2.107835933333263,
+      "read_full_min_s": 2.1008500000461936,
+      "read_full_max_s": 2.113665399956517,
+      "read_full_runs_s": [
+        2.108992399997078,
+        2.1008500000461936,
+        2.113665399956517
+      ],
+      "read_full_peak_mb": 262.93331600000005,
+      "read_selective_avg_s": 0.4706213666747014,
+      "read_selective_min_s": 0.46509800001513213,
+      "read_selective_max_s": 0.47968410002067685,
+      "read_selective_runs_s": [
+        0.46708199998829514,
+        0.47968410002067685,
+        0.46509800001513213
+      ],
+      "read_selective_peak_mb": 58.04231166666667,
+      "output_path": null
+    },
+    "jsonl": {
+      "write_avg_s": 2.033136700008375,
+      "write_min_s": 2.014159800019115,
+      "write_max_s": 2.051011400006246,
+      "write_runs_s": [
+        2.051011400006246,
+        2.034238899999764,
+        2.014159800019115
+      ],
+      "size_bytes": 229577574,
+      "read_full_avg_s": 24.814272266696207,
+      "read_full_min_s": 24.468363300024066,
+      "read_full_max_s": 25.116450800036546,
+      "read_full_runs_s": [
+        25.116450800036546,
+        24.468363300024066,
+        24.85800270002801
+      ],
+      "read_full_peak_mb": 2267.056187,
+      "read_selective_avg_s": 30.263660233332,
+      "read_selective_min_s": 24.865738399967086,
+      "read_selective_max_s": 33.00282430002699,
+      "read_selective_runs_s": [
+        33.00282430002699,
+        32.922418000001926,
+        24.865738399967086
+      ],
+      "read_selective_peak_mb": 2267.055239,
+      "output_path": null
+    },
+    "parquet": {
+      "write_avg_s": 0.30827969999518245,
+      "write_min_s": 0.29174840002087876,
+      "write_max_s": 0.33351959998253733,
+      "write_runs_s": [
+        0.33351959998253733,
+        0.29174840002087876,
+        0.2995710999821313
+      ],
+      "size_bytes": 81654392,
+      "read_full_avg_s": 0.07478869999370848,
+      "read_full_min_s": 0.05994730000384152,
+      "read_full_max_s": 0.09740159998182207,
+      "read_full_runs_s": [
+        0.09740159998182207,
+        0.05994730000384152,
+        0.06701719999546185
+      ],
+      "read_full_peak_mb": 81.85208433333334,
+      "read_selective_avg_s": 0.03129390000443285,
+      "read_selective_min_s": 0.03106629999820143,
+      "read_selective_max_s": 0.03148740000324324,
+      "read_selective_runs_s": [
+        0.03148740000324324,
+        0.03106629999820143,
+        0.031328000011853874
+      ],
+      "read_selective_peak_mb": 8.677999999999999,
+      "output_path": "C:\\Users\\ulise\\OneDrive\\Documentos\\Elixir\\Python\\Modulo Datos\\data\\transactions_1m_parquet.parquet"
+    },
+    "parquet_snappy": {
+      "write_avg_s": 0.45704876666422933,
+      "write_min_s": 0.436858500004746,
+      "write_max_s": 0.49271419999422505,
+      "write_runs_s": [
+        0.49271419999422505,
+        0.436858500004746,
+        0.4415735999937169
+      ],
+      "size_bytes": 64764778,
+      "read_full_avg_s": 0.08609416667604819,
+      "read_full_min_s": 0.07668170001124963,
+      "read_full_max_s": 0.10396610002499074,
+      "read_full_runs_s": [
+        0.10396610002499074,
+        0.07668170001124963,
+        0.0776346999919042
+      ],
+      "read_full_peak_mb": 64.78463266666667,
+      "read_selective_avg_s": 0.030532033337901037,
+      "read_selective_min_s": 0.030299300036858767,
+      "read_selective_max_s": 0.03075039997929707,
+      "read_selective_runs_s": [
+        0.030299300036858767,
+        0.03054639999754727,
+        0.03075039997929707
+      ],
+      "read_selective_peak_mb": 6.056268,
+      "output_path": "C:\\Users\\ulise\\OneDrive\\Documentos\\Elixir\\Python\\Modulo Datos\\data\\transactions_1m_parquet_snappy.parquet"
+    },
+    "parquet_gzip": {
+      "write_avg_s": 9.596481099996405,
+      "write_min_s": 9.45464810001431,
+      "write_max_s": 9.787197099998593,
+      "write_runs_s": [
+        9.45464810001431,
+        9.547598099976312,
+        9.787197099998593
+      ],
+      "size_bytes": 43513408,
+      "read_full_avg_s": 0.234991333350384,
+      "read_full_min_s": 0.22867660003248602,
+      "read_full_max_s": 0.24751499999547377,
+      "read_full_runs_s": [
+        0.24751499999547377,
+        0.22867660003248602,
+        0.22878240002319217
+      ],
+      "read_full_peak_mb": 43.527343,
+      "read_selective_avg_s": 0.031883233323848494,
+      "read_selective_min_s": 0.031794299953617156,
+      "read_selective_max_s": 0.032045100000686944,
+      "read_selective_runs_s": [
+        0.03181030001724139,
+        0.031794299953617156,
+        0.032045100000686944
+      ],
+      "read_selective_peak_mb": 4.215719333333333,
+      "output_path": "C:\\Users\\ulise\\OneDrive\\Documentos\\Elixir\\Python\\Modulo Datos\\data\\transactions_1m_parquet_gzip.parquet"
+    }
+  }
+}

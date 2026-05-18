@@ -1,0 +1,44 @@
+[
+  {
+    "mode": "WAL",
+    "wal": true,
+    "chunk_size": 20000,
+    "total_rows": 1000000,
+    "db_rows": 1000000,
+    "csv_rows": 1000000,
+    "integrity_ok": true,
+    "total_time_s": 41.748,
+    "rows_per_sec": 23953.0,
+    "chunk_count": 50,
+    "avg_chunk_s": 0.804,
+    "under_3min": true
+  },
+  {
+    "mode": "DELETE (sin WAL)",
+    "wal": false,
+    "chunk_size": 20000,
+    "total_rows": 1000000,
+    "db_rows": 1000000,
+    "csv_rows": 1000000,
+    "integrity_ok": true,
+    "total_time_s": 44.261,
+    "rows_per_sec": 22593.0,
+    "chunk_count": 50,
+    "avg_chunk_s": 0.853,
+    "under_3min": true
+  },
+  {
+    "mode": "WAL",
+    "wal": true,
+    "chunk_size": 20000,
+    "total_rows": 1000000,
+    "db_rows": 1000000,
+    "csv_rows": 1000000,
+    "integrity_ok": true,
+    "total_time_s": 40.793,
+    "rows_per_sec": 24514.0,
+    "chunk_count": 50,
+    "avg_chunk_s": 0.785,
+    "under_3min": true
+  }
+]

@@ -1,0 +1,256 @@
+{
+  "db_path": "C:\\Users\\ulise\\OneDrive\\Documentos\\Elixir\\Python\\Modulo Datos\\data\\transactions.db",
+  "parquet_path": "C:\\Users\\ulise\\OneDrive\\Documentos\\Elixir\\Python\\Modulo Datos\\data\\transactions_1m_parquet_snappy.parquet",
+  "repeats": 5,
+  "params": {
+    "transaction_id": "00000218e2821143-2fc77ef6fa8618d8-fa86-7ef6-000000002fc7",
+    "user_id": "2076",
+    "date_from": "2025-05-27 00:00:00",
+    "date_to": "2025-05-28 23:59:59",
+    "month_ago": "2026-04-18 03:02:28",
+    "country_code": "MX",
+    "min_tx": "2"
+  },
+  "patterns": {
+    "P1": {
+      "description": "Buscar transacci\u00f3n por transaction_id exacto",
+      "sla_ms": 10,
+      "sqlite_with_idx": {
+        "avg_ms": 0.133,
+        "min_ms": 0.044,
+        "max_ms": 0.463,
+        "runs_ms": [
+          0.463,
+          0.051,
+          0.05,
+          0.055,
+          0.044
+        ],
+        "rows": 1,
+        "plan": "SEARCH transactions USING INDEX sqlite_autoindex_transactions_1 (transaction_id=?)",
+        "sla_ok": true
+      },
+      "sqlite_no_idx": {
+        "avg_ms": 0.063,
+        "min_ms": 0.042,
+        "max_ms": 0.129,
+        "runs_ms": [
+          0.129,
+          0.052,
+          0.044,
+          0.045,
+          0.042
+        ],
+        "rows": 1,
+        "plan": "SEARCH transactions USING INDEX sqlite_autoindex_transactions_1 (transaction_id=?)",
+        "speedup_vs_with": 0.5
+      },
+      "duckdb": {
+        "avg_ms": 88.807,
+        "min_ms": 86.221,
+        "max_ms": 90.525,
+        "runs_ms": [
+          90.525,
+          89.855,
+          89.897,
+          87.536,
+          86.221
+        ],
+        "rows": 1
+      },
+      "winner": "SQLite"
+    },
+    "P2": {
+      "description": "\u00daltimas 20 transacciones de un usuario",
+      "sla_ms": 50,
+      "sqlite_with_idx": {
+        "avg_ms": 0.154,
+        "min_ms": 0.083,
+        "max_ms": 0.387,
+        "runs_ms": [
+          0.387,
+          0.096,
+          0.083,
+          0.113,
+          0.093
+        ],
+        "rows": 20,
+        "plan": "SEARCH transactions USING INDEX idx_user_timestamp (user_id=?)",
+        "sla_ok": true
+      },
+      "sqlite_no_idx": {
+        "avg_ms": 108.302,
+        "min_ms": 106.626,
+        "max_ms": 111.367,
+        "runs_ms": [
+          111.367,
+          106.736,
+          106.626,
+          106.952,
+          109.828
+        ],
+        "rows": 20,
+        "plan": "SCAN transactions\nUSE TEMP B-TREE FOR ORDER BY",
+        "speedup_vs_with": 703.3
+      },
+      "duckdb": {
+        "avg_ms": 98.187,
+        "min_ms": 94.807,
+        "max_ms": 100.296,
+        "runs_ms": [
+          100.296,
+          99.236,
+          98.715,
+          97.881,
+          94.807
+        ],
+        "rows": 20
+      },
+      "winner": "SQLite"
+    },
+    "P3": {
+      "description": "Transacciones de un usuario en un rango de fechas",
+      "sla_ms": 50,
+      "sqlite_with_idx": {
+        "avg_ms": 0.083,
+        "min_ms": 0.05,
+        "max_ms": 0.181,
+        "runs_ms": [
+          0.181,
+          0.069,
+          0.059,
+          0.056,
+          0.05
+        ],
+        "rows": 1,
+        "plan": "SEARCH transactions USING INDEX idx_user_timestamp (user_id=? AND timestamp>? AND timestamp<?)",
+        "sla_ok": true
+      },
+      "sqlite_no_idx": {
+        "avg_ms": 112.477,
+        "min_ms": 106.516,
+        "max_ms": 124.065,
+        "runs_ms": [
+          107.727,
+          106.724,
+          124.065,
+          106.516,
+          117.354
+        ],
+        "rows": 1,
+        "plan": "SCAN transactions",
+        "speedup_vs_with": 1355.1
+      },
+      "duckdb": {
+        "avg_ms": 56.781,
+        "min_ms": 56.253,
+        "max_ms": 57.425,
+        "runs_ms": [
+          56.989,
+          56.792,
+          56.253,
+          56.447,
+          57.425
+        ],
+        "rows": 1
+      },
+      "winner": "SQLite"
+    },
+    "P4": {
+      "description": "Suma de amount de un usuario en el \u00faltimo mes",
+      "sla_ms": 50,
+      "sqlite_with_idx": {
+        "avg_ms": 0.158,
+        "min_ms": 0.093,
+        "max_ms": 0.374,
+        "runs_ms": [
+          0.374,
+          0.093,
+          0.115,
+          0.103,
+          0.107
+        ],
+        "rows": 1,
+        "plan": "SEARCH transactions USING INDEX idx_user_timestamp (user_id=? AND timestamp>?)",
+        "sla_ok": true
+      },
+      "sqlite_no_idx": {
+        "avg_ms": 108.429,
+        "min_ms": 106.828,
+        "max_ms": 109.436,
+        "runs_ms": [
+          109.425,
+          108.231,
+          109.436,
+          108.223,
+          106.828
+        ],
+        "rows": 1,
+        "plan": "SCAN transactions",
+        "speedup_vs_with": 686.3
+      },
+      "duckdb": {
+        "avg_ms": 20.11,
+        "min_ms": 19.588,
+        "max_ms": 20.588,
+        "runs_ms": [
+          20.418,
+          19.714,
+          20.239,
+          19.588,
+          20.588
+        ],
+        "rows": 1
+      },
+      "winner": "SQLite"
+    },
+    "P5": {
+      "description": "Usuarios de un pa\u00eds con m\u00e1s de N transacciones",
+      "sla_ms": 200,
+      "sqlite_with_idx": {
+        "avg_ms": 8.59,
+        "min_ms": 7.83,
+        "max_ms": 10.559,
+        "runs_ms": [
+          10.559,
+          8.134,
+          8.306,
+          8.118,
+          7.83
+        ],
+        "rows": 7584,
+        "plan": "SEARCH transactions USING COVERING INDEX idx_country_user (country_code=?)\nUSE TEMP B-TREE FOR ORDER BY",
+        "sla_ok": true
+      },
+      "sqlite_no_idx": {
+        "avg_ms": 143.296,
+        "min_ms": 142.325,
+        "max_ms": 145.259,
+        "runs_ms": [
+          145.259,
+          143.302,
+          142.465,
+          143.13,
+          142.325
+        ],
+        "rows": 7584,
+        "plan": "SCAN transactions\nUSE TEMP B-TREE FOR GROUP BY\nUSE TEMP B-TREE FOR ORDER BY",
+        "speedup_vs_with": 16.7
+      },
+      "duckdb": {
+        "avg_ms": 14.63,
+        "min_ms": 13.514,
+        "max_ms": 18.305,
+        "runs_ms": [
+          18.305,
+          13.615,
+          13.794,
+          13.92,
+          13.514
+        ],
+        "rows": 7584
+      },
+      "winner": "SQLite"
+    }
+  }
+}
