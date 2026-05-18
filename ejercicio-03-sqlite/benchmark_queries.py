@@ -21,6 +21,8 @@ Por qué usar parámetros reales:
 Si inventamos un user_id que no existe, la query termina en microsegundos
 porque SQLite no encuentra nada — eso no mide el SLA real. Los parámetros
 se extraen del propio dataset antes de correr el benchmark.
+
+Entrega de ejercicio 3, solo por correccion del commit. 
 """
 
 import argparse
