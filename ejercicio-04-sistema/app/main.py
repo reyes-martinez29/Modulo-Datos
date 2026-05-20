@@ -21,21 +21,19 @@ Variables de entorno esperadas:
 """
 
 import os
-import time
 from contextlib import asynccontextmanager
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException
 
 from app.cache import cache
 from app.db import (
     close_connections,
+    get_uptime,
     init_connections,
     insert_batch,
     is_duckdb_connected,
     is_sqlite_connected,
-    get_uptime,
     query_analytics_summary,
     query_top_merchants,
     query_user_exists,
@@ -98,9 +96,8 @@ app = FastAPI(
 
 
 # ---------------------------------------------------------------------------
-# Endpoints de analytics — DuckDB + cache
+# Endpoint de desarrollo — limpiar cache
 # ---------------------------------------------------------------------------
-
 
 @app.post(
     "/dev/cache/clear",
@@ -108,15 +105,18 @@ app = FastAPI(
 )
 async def dev_clear_cache():
     """
-    Endpoint de desarrollo para invalidar el cache en memoria.
+    Invalida el cache en memoria. Usado por el benchmark de latencia para
+    simular condiciones cold sin reiniciar el servidor entre requests.
 
-    Se usa desde el benchmark de latencia para simular condiciones *cold*
-    sin reiniciar el servidor entre requests.
-
-    Importante: no toca la base de datos; solo invalida entradas del cache.
+    No toca la base de datos — solo elimina entradas del cache.
     """
     cache.invalidate_prefix("analytics:")
     return {"status": "ok", "cleared_prefix": "analytics:"}
+
+
+# ---------------------------------------------------------------------------
+# Endpoints de analytics — DuckDB + cache
+# ---------------------------------------------------------------------------
 
 @app.get(
     "/analytics/summary",
@@ -138,7 +138,6 @@ async def get_analytics_summary():
     if cached is not None:
         return cached
 
-    # Cache miss — ejecutar la query y guardar el resultado
     result = query_analytics_summary()
     cache.set(cache_key, result, ttl=ANALYTICS_TTL)
     return result
@@ -171,18 +170,16 @@ async def get_top_merchants(
     if country:
         country = country.upper()
 
-    cache_key = cache.make_key("analytics", "top-merchants", f"limit={limit}", f"country={country}")
-    cached    = cache.get(cache_key)
+    cache_key = cache.make_key(
+        "analytics", "top-merchants", f"limit={limit}", f"country={country}"
+    )
+    cached = cache.get(cache_key)
 
     if cached is not None:
         return cached
 
     merchants = query_top_merchants(limit=limit, country=country)
-    result    = {
-        "merchants": merchants,
-        "limit":     limit,
-        "country":   country,
-    }
+    result    = {"merchants": merchants, "limit": limit, "country": country}
     cache.set(cache_key, result, ttl=ANALYTICS_TTL)
     return result
 
@@ -206,7 +203,7 @@ async def get_user_transactions(
     Soporta paginación con page y page_size.
 
     Retorna 404 si el usuario no existe en la base de datos.
-    Retorna lista vacía si la página solicitada está fuera del rango del usuario.
+    Retorna lista vacía si la página está fuera del rango del usuario.
 
     Backend: SQLite con idx_user_timestamp — <1ms por el índice B-Tree (medido en E3).
              SLA: <80ms
@@ -216,12 +213,8 @@ async def get_user_transactions(
     if page_size < 1 or page_size > 100:
         raise HTTPException(status_code=422, detail="page_size debe estar entre 1 y 100")
 
-    # Verificar que el usuario existe antes de paginar
     if not query_user_exists(user_id):
-        raise HTTPException(
-            status_code=404,
-            detail=f"Usuario {user_id} no encontrado",
-        )
+        raise HTTPException(status_code=404, detail=f"Usuario {user_id} no encontrado")
 
     transactions = query_user_transactions(user_id, page=page, page_size=page_size)
 
@@ -240,22 +233,17 @@ async def get_user_transactions(
 )
 async def get_user_stats(user_id: int):
     """
-    Retorna el monto total, conteo de transacciones, categoría más frecuente
-    y país más frecuente del usuario.
+    Retorna monto total, conteo, categoría más frecuente y país más frecuente.
 
     Retorna 404 si el usuario no existe.
 
-    Backend: SQLite con idx_user_timestamp — todos los GROUP BY están
-             filtrados por user_id, por lo que el índice cubre la query.
+    Backend: SQLite con idx_user_timestamp — GROUP BY filtrado por user_id.
              SLA: <80ms
     """
     stats = query_user_stats(user_id)
 
     if stats is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Usuario {user_id} no encontrado",
-        )
+        raise HTTPException(status_code=404, detail=f"Usuario {user_id} no encontrado")
 
     return stats
 
@@ -274,18 +262,15 @@ async def post_transactions_batch(request: BatchRequest):
     Recibe hasta 500 transacciones, valida el schema con Pydantic,
     deduplica por transaction_id e inserta las nuevas en SQLite.
 
-    Si el schema de cualquier transacción es inválido, FastAPI retorna
-    HTTP 422 automáticamente con el detalle del campo que falló —
+    Si cualquier campo es inválido FastAPI retorna 422 automáticamente
     antes de que este endpoint ejecute nada.
 
-    Después de un insert exitoso se invalida el cache de analytics para
-    que los próximos requests a /analytics/* reflejen los nuevos datos.
+    Después de un insert exitoso invalida el cache de analytics para que
+    los próximos requests a /analytics/* reflejen los datos actualizados.
 
-    Backend: SQLite — es la base transaccional de escritura del sistema.
+    Backend: SQLite — base transaccional de escritura del sistema.
              SLA: <2s para 500 registros.
     """
-    # Convertir los modelos Pydantic a dicts para la capa de DB.
-    # El timestamp se serializa como string ISO8601 para SQLite.
     transactions = [
         {
             "transaction_id": t.transaction_id,
@@ -302,7 +287,6 @@ async def post_transactions_batch(request: BatchRequest):
 
     result = await insert_batch(transactions)
 
-    # Invalidar cache analítico después de insertar datos nuevos
     if result["inserted"] > 0:
         cache.invalidate_prefix("analytics:")
 
@@ -320,11 +304,10 @@ async def post_transactions_batch(request: BatchRequest):
 )
 async def get_health():
     """
-    Retorna el estado del servidor: uptime, conexiones activas y hit rate
-    del cache desde que arrancó.
+    Retorna uptime, estado de conexiones y hit rate del cache desde el arranque.
 
-    Este endpoint NUNCA consulta la base de datos. Solo lee estado en memoria.
-    Por eso siempre responde en <50ms independientemente de la carga del sistema.
+    NUNCA consulta la base de datos. Solo lee estado en memoria.
+    Por eso siempre responde en <50ms independientemente de la carga.
 
     SLA: <50ms siempre.
     """

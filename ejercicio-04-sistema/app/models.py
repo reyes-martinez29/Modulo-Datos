@@ -17,12 +17,38 @@ Decisión de diseño: los tipos de los campos de TransactionIn son estrictos
 a propósito. Si el cliente manda amount como string ("123.45" en lugar de
 123.45), Pydantic retorna HTTP 422 automáticamente con el detalle del campo
 que falló. Eso es exactamente el comportamiento que pide el enunciado.
+
+Las constantes de valores válidos (VALID_CATEGORIES, etc.) se definen a nivel
+de módulo en lugar de como atributos de clase. Pydantic 2.x puede tratar
+atributos de clase sin anotación de tipo como campos del modelo, lo que
+genera comportamiento inesperado en validación y serialización.
 """
 
 from datetime import datetime
-from typing import ClassVar, Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
+
+
+# ---------------------------------------------------------------------------
+# Constantes de validación — a nivel de módulo, no de clase
+# ---------------------------------------------------------------------------
+# Mismos valores que usa generate_data.py en E1. Si el schema del módulo
+# cambia, se actualiza aquí y los validadores reflejan el cambio automáticamente.
+
+VALID_CATEGORIES: frozenset[str] = frozenset({
+    "Food", "Travel", "Electronics", "Health", "Entertainment",
+    "Retail", "Transport", "Education", "Services", "Other",
+})
+
+VALID_STATUSES: frozenset[str] = frozenset({
+    "completed", "failed", "pending",
+})
+
+VALID_COUNTRIES: frozenset[str] = frozenset({
+    "MX", "CO", "BR", "AR", "CL", "PE", "EC",
+    "VE", "BO", "PY", "UY", "CR", "GT", "PA", "DO",
+})
 
 
 # ---------------------------------------------------------------------------
@@ -34,9 +60,8 @@ class TransactionIn(BaseModel):
     Representa una transacción individual dentro de un batch.
 
     Los validadores de campo garantizan que los valores están dentro de los
-    rangos definidos en el schema del módulo (el mismo que usa generate_data.py
-    en E1). Una transacción con amount=-5 o country_code="ZZ" debe ser
-    rechazada con 422 antes de llegar a la base de datos.
+    rangos definidos en el schema del módulo. Una transacción con amount=-5
+    o country_code="ZZ" es rechazada con 422 antes de llegar a la base de datos.
     """
 
     transaction_id: str = Field(
@@ -81,33 +106,23 @@ class TransactionIn(BaseModel):
         description="Estado: completed, failed o pending",
     )
 
-    VALID_CATEGORIES: ClassVar[set[str]] = {
-        "Food", "Travel", "Electronics", "Health", "Entertainment",
-        "Retail", "Transport", "Education", "Services", "Other",
-    }
-    VALID_STATUSES: ClassVar[set[str]] = {"completed", "failed", "pending"}
-    VALID_COUNTRIES: ClassVar[set[str]] = {
-        "MX", "CO", "BR", "AR", "CL", "PE", "EC",
-        "VE", "BO", "PY", "UY", "CR", "GT", "PA", "DO",
-    }
-
     @field_validator("category")
     @classmethod
     def validate_category(cls, v: str) -> str:
-        if v not in cls.VALID_CATEGORIES:
+        if v not in VALID_CATEGORIES:
             raise ValueError(
                 f"'{v}' no es una categoría válida. "
-                f"Opciones: {sorted(cls.VALID_CATEGORIES)}"
+                f"Opciones: {sorted(VALID_CATEGORIES)}"
             )
         return v
 
     @field_validator("status")
     @classmethod
     def validate_status(cls, v: str) -> str:
-        if v not in cls.VALID_STATUSES:
+        if v not in VALID_STATUSES:
             raise ValueError(
                 f"'{v}' no es un status válido. "
-                f"Opciones: {sorted(cls.VALID_STATUSES)}"
+                f"Opciones: {sorted(VALID_STATUSES)}"
             )
         return v
 
@@ -115,10 +130,10 @@ class TransactionIn(BaseModel):
     @classmethod
     def validate_country(cls, v: str) -> str:
         v = v.upper()
-        if v not in cls.VALID_COUNTRIES:
+        if v not in VALID_COUNTRIES:
             raise ValueError(
                 f"'{v}' no es un country_code válido. "
-                f"Opciones: {sorted(cls.VALID_COUNTRIES)}"
+                f"Opciones: {sorted(VALID_COUNTRIES)}"
             )
         return v
 

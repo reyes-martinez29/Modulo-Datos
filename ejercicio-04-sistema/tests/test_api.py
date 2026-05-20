@@ -137,8 +137,12 @@ def test_health_sla(client):
     )
 
 
+# ---------------------------------------------------------------------------
+# Tests de /dev/cache/clear
+# ---------------------------------------------------------------------------
+
 def test_dev_cache_clear_ok(client):
-    """POST /dev/cache/clear debe responder 200 y limpiar cache analítico."""
+    """POST /dev/cache/clear debe responder 200 con status y cleared_prefix."""
     response = client.post("/dev/cache/clear")
     assert response.status_code == 200
     body = response.json()
