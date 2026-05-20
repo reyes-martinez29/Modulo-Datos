@@ -1,0 +1,74 @@
+{
+  "run_id": "run1",
+  "host": "http://127.0.0.1:8000",
+  "n_requests": 100,
+  "timestamp": "2026-05-20T03:05:19",
+  "endpoints": {
+    "GET /analytics/summary": {
+      "cold": {
+        "p50": 39.89,
+        "p95": 45.03,
+        "p99": 51.41,
+        "avg": 40.57,
+        "min": 37.59,
+        "max": 56.5,
+        "sla_ms": 500,
+        "sla_status": "PASS"
+      },
+      "warm": {
+        "p50": 0.79,
+        "p95": 1.14,
+        "p99": 1.39,
+        "avg": 0.81,
+        "min": 0.58,
+        "max": 1.6,
+        "sla_ms": 20,
+        "sla_status": "PASS"
+      }
+    },
+    "GET /analytics/top-merchants (limit=10)": {
+      "cold": {
+        "p50": 18.21,
+        "p95": 20.02,
+        "p99": 21.39,
+        "avg": 18.44,
+        "min": 16.72,
+        "max": 35.25,
+        "sla_ms": 500,
+        "sla_status": "PASS"
+      },
+      "warm": {
+        "p50": 0.66,
+        "p95": 0.84,
+        "p99": 0.9,
+        "avg": 0.68,
+        "min": 0.57,
+        "max": 0.94,
+        "sla_ms": 20,
+        "sla_status": "PASS"
+      }
+    },
+    "GET /analytics/top-merchants (limit=10, country=MX)": {
+      "cold": {
+        "p50": 17.88,
+        "p95": 19.14,
+        "p99": 24.5,
+        "avg": 18.03,
+        "min": 16.94,
+        "max": 24.92,
+        "sla_ms": 500,
+        "sla_status": "PASS"
+      },
+      "warm": {
+        "p50": 0.66,
+        "p95": 0.81,
+        "p99": 0.98,
+        "avg": 0.68,
+        "min": 0.57,
+        "max": 1.18,
+        "sla_ms": 20,
+        "sla_status": "PASS"
+      }
+    }
+  }
+}
