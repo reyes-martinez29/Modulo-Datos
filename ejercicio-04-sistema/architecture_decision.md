@@ -1,8 +1,8 @@
 # Architecture Decision — Ejercicio 4: El Sistema Completo
 
-Este documento justifica qué backend usa cada endpoint y por qué. La decisión
-no es arbitraria — cada elección está respaldada por los números medidos en
-los ejercicios anteriores.
+Este documento es para justificar qué backend usa cada endpoint y por qué. La decisión
+no es arbitraria, esta basada en cada elección y está respaldada por los números medidos en
+los ejercicios anteriores (Los cuales son mencionados como E1 = ejercicio-01 ).
 
 ---
 
@@ -15,8 +15,7 @@ El sistema tiene acceso a dos fuentes de datos:
 - **SQLite de E3** — las mismas 1M transacciones en una base relacional con
   índices B-Tree diseñados para lookups por usuario. Lo consulta SQLite.
 
-La elección de backend por endpoint no es una preferencia de estilo — es una
-consecuencia directa de lo que cada engine demostró en los ejercicios anteriores.
+La elección de backend por endpoint no debe ser una preferencia de estilo o un capricho, es una consecuencia directa de lo que cada engine demostró durante los ejercicios anteriores.
 
 ---
 

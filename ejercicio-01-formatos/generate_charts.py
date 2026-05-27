@@ -202,7 +202,7 @@ def chart_ram_usage(data: dict, out_path: Path) -> None:
                     ha="center", va="bottom", fontsize=6.5, color="#333333",
                 )
 
-    # Advertencia visible en la gráfica
+    # Advertencia  en la gráfica
     ax.text(
         0.01, 0.97,
         "* RAM de Parquet ≈ tamaño en disco: tracemalloc no captura\n"

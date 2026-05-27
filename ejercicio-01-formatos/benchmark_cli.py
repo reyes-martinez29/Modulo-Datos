@@ -8,6 +8,10 @@ Uso:
 Salida:
     results/benchmark_{size}.json   — métricas completas en JSON
     Impresión en consola de cada run en tiempo real
+
+
+    Esta es la correccion de la primer entrega. 
+    Una entrega un poco mas analizada.
 """
 
 import argparse

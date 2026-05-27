@@ -13,7 +13,7 @@ Para cada patrón mide:
     - Tiempo equivalente en DuckDB sobre el Parquet de E1
 
 El benchmark usa parámetros representativos para cada patrón:
-    - P1: transaction_id real del dataset (no inventado)
+    - P1: transaction_id real del dataset 
     - P2/P3/P4: user_id con alta actividad (~20 transacciones promedio)
     - P5: country_code 'MX' con N=20
 

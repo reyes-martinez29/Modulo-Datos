@@ -419,7 +419,7 @@ Para comparar WAL vs no-WAL usa el mismo --chunk-size en ambas corridas.
     print(f"\nResultados guardados en {results_path}")
 
     if not result["under_3min"]:
-        print(f"\n!  La ingesta tardó {result['total_time_s']:.1f}s "
+        print(f"\n!!  La ingesta tardó {result['total_time_s']:.1f}s "
               f"(límite: 180s). Considera aumentar --chunk-size.")
     else:
         print(f"\n✓ Ingesta completada en {result['total_time_s']:.1f}s "
