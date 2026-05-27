@@ -16,6 +16,10 @@ Paths registrados:
 """
 
 from django.urls import path
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 from transactions.views import (
     AnalyticsSummaryView,
@@ -26,7 +30,33 @@ from transactions.views import (
     UserTransactionsView,
 )
 
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def api_root(request, format=None):
+    """Vista raíz — lista todos los endpoints disponibles."""
+    return Response({
+        "health":          reverse("health",          request=request),
+        "analytics": {
+            "summary":       reverse("analytics-summary",       request=request),
+            "top-merchants": reverse("analytics-top-merchants", request=request),
+        },
+        "users": {
+            "transactions":  request.build_absolute_uri("/api/v1/users/2076/transactions"),
+            "stats":         request.build_absolute_uri("/api/v1/users/2076/stats"),
+            "nota":          "reemplaza 2076 con cualquier user_id (1-50000)",
+        },
+        "batch":           reverse("transactions-batch", request=request),
+        "auth": {
+            "token":         request.build_absolute_uri("/api/v1/auth/token/"),
+            "login":         request.build_absolute_uri("/api/v1/api-auth/login/"),
+        },
+    })
+
+
 urlpatterns = [
+    # Vista raíz — lista todos los endpoints
+    path("", api_root, name="api-root"),
+
     # Salud del sistema — público, sin autenticación
     path(
         "health",

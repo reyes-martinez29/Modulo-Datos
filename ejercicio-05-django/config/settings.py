@@ -168,6 +168,13 @@ STATIC_URL  = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # ---------------------------------------------------------------------------
+# Redirección después del login del Browsable API
+# ---------------------------------------------------------------------------
+# Por defecto Django redirige a /accounts/profile/ después del login,
+# que no existe en este proyecto. Redirigimos a la raíz de la API.
+LOGIN_REDIRECT_URL = "/api/v1/"
+
+# ---------------------------------------------------------------------------
 # Default primary key
 # ---------------------------------------------------------------------------
 
