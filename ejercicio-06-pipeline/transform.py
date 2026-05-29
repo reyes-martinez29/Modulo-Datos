@@ -43,7 +43,7 @@ import json
 import logging
 import re
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -218,7 +218,7 @@ def transform(
     ----------
     rows : list[dict] — filas normalizadas por extract.py
     now  : datetime de referencia para validar timestamps futuros.
-           Si es None, usa datetime.utcnow(). Se acepta como parámetro
+           Si es None, usa datetime.now(timezone.utc).replace(tzinfo=None). Se acepta como parámetro
            para facilitar los tests deterministas.
 
     Retorna
@@ -228,7 +228,7 @@ def transform(
                             'rejection_reason' (str) y 'rejection_type' (str)
     """
     if now is None:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
 
     valid:    list[dict] = []
     rejected: list[dict] = []
@@ -291,13 +291,13 @@ def write_quarantine(
         # Sin rechazados no hay nada que escribir — retornar path igualmente
         qdir = Path(quarantine_dir)
         qdir.mkdir(parents=True, exist_ok=True)
-        today = datetime.utcnow().strftime("%Y-%m-%d")
+        today = datetime.now(timezone.utc).replace(tzinfo=None).strftime("%Y-%m-%d")
         return qdir / f"{today}.jsonl"
 
     qdir = Path(quarantine_dir)
     qdir.mkdir(parents=True, exist_ok=True)
 
-    today     = datetime.utcnow().strftime("%Y-%m-%d")
+    today     = datetime.now(timezone.utc).replace(tzinfo=None).strftime("%Y-%m-%d")
     qfile     = qdir / f"{today}.jsonl"
 
     # Append — múltiples corridas del mismo día van al mismo archivo

@@ -41,3 +41,11 @@ htmlcov/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# Datos generados en cada corrida — no van al repo
+ejercicio-06-pipeline/quarantine/
+ejercicio-06-pipeline/results/
+ 
+# Excepto los .gitkeep que mantienen las carpetas
+!ejercicio-06-pipeline/quarantine/.gitkeep
+!ejercicio-06-pipeline/results/.gitkeep
