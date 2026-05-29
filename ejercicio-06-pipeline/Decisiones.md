@@ -235,13 +235,13 @@ generador.
 | Fase | Tiempo estimado |
 |------|----------------|
 | Lectura del enunciado y comprensión del problema | ~1 hora |
-| Análisis de arquitectura y decisiones de diseño | ~2 horas |
-| Implementación de `data_source.py` y `extract.py` | ~1.5 horas |
+| Análisis de arquitectura y decisiones de diseño | ~3 horas |
+| Implementación de `data_source.py` y `extract.py` | ~2 horas |
 | Implementación de `transform.py` y `load.py` | ~2 horas |
-| Implementación de `pipeline.py` y `test_pipeline.py` | ~1.5 horas |
-| Pruebas, depuración y validación en producción | ~1.5 horas |
-| Documentación (`decisions.md`, `README.md`) | ~30 min |
-| **Total** | **~10 horas** |
+| Implementación de `pipeline.py` y `test_pipeline.py` | ~2 horas |
+| Pruebas, depuración y validación en producción | ~2 horas |
+| Documentación (`decisions.md`, `README.md`) | ~1 min |
+| **Total** | **~13 horas** |
 
 El tiempo más significativo fue la fase de análisis — definir con precisión
 la separación de responsabilidades entre capas, las invariantes matemáticas
