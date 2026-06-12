@@ -1,0 +1,29 @@
+# Dependencias de runtime para ejercicio-04-sistema dentro del contenedor.
+#
+# Solo lo que app/main.py, app/db.py, app/cache.py y app/models.py importan
+# directamente. pandas, polars, matplotlib y django (presentes en el
+# pyproject.toml del repo completo) NO se incluyen aqui -- son de otros
+# ejercicios y aumentarian el tamano de la imagen sin necesidad.
+#
+# pyarrow se omite deliberadamente: duckdb trae su propio lector de Parquet
+# (read_parquet) y NO requiere pyarrow instalado. Verificado en un venv
+# aislado con solo duckdb: "CREATE VIEW t AS SELECT * FROM read_parquet(...)"
+# funciona correctamente. Incluir pyarrow agregaria ~150MB a la imagen sin
+# aportar nada al path de ejecucion de este servicio.
+
+# uvicorn[standard] (sin el extra) en lugar de uvicorn[standard] (con extra):
+# el extra "standard" agrega uvloop (14MB), httptools (1.6MB), websockets
+# (1.6MB) y watchfiles (1.3MB) -- medido con `du -sh` en el venv real,
+# total ~18.5MB. websockets y watchfiles no se usan (esta API no tiene
+# endpoints websocket, y --reload no se usa en producción). uvloop y
+# httptools dan mejora de performance en el event loop y el parser HTTP,
+# pero uvicorn funciona correctamente sin ellos (usa el event loop
+# estándar de asyncio y el parser HTTP puro-Python h11, que ya es una
+# dependencia transitiva de fastapi/starlette). pyyaml se mantiene
+# explícito porque --log-config log_config.yaml lo requiere y NO viene
+# incluido sin el extra [standard].
+fastapi>=0.136.1,<0.137.0
+uvicorn>=0.47.0,<0.50.0
+duckdb>=1.5.2,<2.0.0
+pydantic>=2.0.0,<3.0.0
+pyyaml>=6.0,<7.0

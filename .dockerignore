@@ -1,0 +1,39 @@
+# IMPORTANTE: este .dockerignore debe vivir en la RAIZ del repo (el mismo
+# nivel que ejercicio-01-formatos/, ejercicio-04-sistema/, etc.), no dentro
+# de ejercicio-07-contenedores/. Docker busca .dockerignore en la raiz del
+# build context, y docker-compose.yml define context: .. (la raiz del repo).
+# Un .dockerignore dentro de ejercicio-07-contenedores/ NO tiene efecto.
+#
+# Ver README.md, seccion "Paso 0", para el comando que copia este archivo
+# a la ubicacion correcta antes de construir.
+
+# Datos -- nunca se copian a la imagen. Se montan como volumen en runtime.
+data/
+*.parquet
+*.db
+*.csv
+
+# Entornos y cachés de Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# Resultados y reportes generados
+results/
+benchmarks/results/
+*.log
+
+# Control de versiones y editor
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Variables de entorno reales (solo .env.example va en el repo)
+.env
+
+# Tests de cada ejercicio -- no son necesarios en la imagen de runtime
+**/tests/

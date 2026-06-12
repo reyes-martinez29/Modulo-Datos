@@ -1,0 +1,44 @@
+services:
+  # ---------------------------------------------------------------------
+  # setup -- corre UNA SOLA VEZ: genera la base SQLite desde el Parquet
+  # antes de que 'api' arranque. Es idempotente (ver scripts/setup.py):
+  # si DB_PATH ya existe dentro de /data, no hace nada y termina con
+  # codigo 0.
+  # ---------------------------------------------------------------------
+  setup:
+    build:
+      context: ..
+      dockerfile: ejercicio-07-contenedores/Dockerfile
+    image: transacciones-api:latest
+    env_file:
+      - .env
+    volumes:
+      - ./data:/data
+    entrypoint: ["python", "scripts/setup.py"]
+
+  # ---------------------------------------------------------------------
+  # api -- servidor FastAPI del E04. Depende de que 'setup' haya
+  # terminado exitosamente (no solo arrancado) gracias a
+  # condition: service_completed_successfully.
+  # ---------------------------------------------------------------------
+  api:
+    build:
+      context: ..
+      dockerfile: ejercicio-07-contenedores/Dockerfile
+    image: transacciones-api:latest
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+
+# Nota: './data' es un bind mount a una carpeta local junto a este
+# docker-compose.yml, NO un volumen nombrado de Docker. Esto es
+# intencional: el usuario debe colocar el Parquet de E1
+# (transactions_1m_parquet_snappy.parquet) en ./data ANTES de correr
+# 'docker compose up --build'. 'setup' lee ese archivo y escribe
+# transactions.db en la misma carpeta. ./data esta en .gitignore.
