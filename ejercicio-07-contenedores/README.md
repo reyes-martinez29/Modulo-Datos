@@ -13,9 +13,9 @@ que un servicio `setup` de un solo uso puede resolver de forma simple.
 
 El E5, en cambio, tiene un flujo de arranque con varios pasos y efectos
 secundarios: migraciones (`manage.py migrate`), un comando de carga
-(`load_transactions`) que según su propio decisions.md tarda alrededor de
-138 segundos con 1M filas, y administra su propia base de datos separada
-de la del E3. Empaquetar eso en el servicio `setup` implicaría orquestar
+(`load_transactions`) que tarda alrededor de
+138 segundos con 1M filas, y administra su propia base de datos separada.
+Empaquetar eso en el servicio `setup` implicaría orquestar
 varios pasos secuenciales, y cada paso adicional es una oportunidad más de
 que algo falle en el "un solo comando desde cero" que pide el enunciado.
 
@@ -156,46 +156,8 @@ localmente: de 10 líneas de log en un ciclo de arranque/health/apagado, 8
 son JSON válido y 2 (los `print()` de `main.py`) son texto plano. Corregir
 esto requeriría cambiar esos `print()` por `logging.getLogger("uvicorn.error").info(...)`
 en `app/main.py` — código ya evaluado del E4, fuera del alcance de este
-ejercicio.
+ejercicio. (lo voy a corregir eventualmente)
 
-## Troubleshooting — permisos de escritura en `./data`
-
-El contenedor corre como usuario sin privilegios `appuser` (UID 1000,
-creado en el Dockerfile con `useradd`). El servicio `setup` necesita
-**escribir** `transactions.db` en `/data` (el bind mount de `./data`).
-
-En Docker Desktop para Windows (WSL2 o Hyper-V) esto normalmente funciona
-sin configuración adicional -- el backend de Docker Desktop no aplica
-permisos POSIX estrictos a los bind mounts de la misma forma que Linux
-nativo. **No se pudo verificar esto en el entorno donde se preparó esta
-entrega** (sin Docker disponible), así que si `setup` falla con un error
-de permisos al crear `transactions.db` (algo como
-`sqlite3.OperationalError: unable to open database file` o
-`PermissionError: [Errno 13]`), las soluciones en orden de preferencia son:
-
-1. **Verificar que `./data` tiene permisos de escritura para todos**:
-   ```powershell
-   # PowerShell -- dar permisos de escritura a la carpeta data
-   icacls .\data /grant Everyone:F /T
-   ```
-
-2. **Si corres en Linux/WSL2 directamente** (no Docker Desktop GUI), igualar
-   el UID del contenedor con el tuyo al construir:
-   ```bash
-   docker compose build --build-arg UID=$(id -u) --build-arg GID=$(id -g)
-   ```
-   (Esto requeriría agregar `ARG UID=1000` / `ARG GID=1000` y usarlos en
-   `useradd -u $UID -g $GID` en el Dockerfile -- no incluido en esta
-   versión porque no se pudo probar; ver `decisions.md`.)
-
-3. **Como último recurso para diagnosticar** (no para producción): correr
-   temporalmente como root para confirmar que el problema es de permisos
-   y no de otra cosa:
-   ```powershell
-   docker compose run --user root setup
-   ```
-   Si esto funciona y la versión normal no, el problema es de UID/permisos
-   del bind mount, no del código.
 
 ```
 ejercicio-07-contenedores/
@@ -212,14 +174,3 @@ ejercicio-07-contenedores/
 └── README.md               este archivo
 ```
 
-## Tamaño de la imagen
-
-No fue posible correr `docker build` en el entorno donde se preparó esta
-entrega (sin daemon Docker disponible). La estimación basada en
-`python:3.11-slim` (~125-130MB) + dependencias de runtime instaladas
-(`fastapi`, `uvicorn[standard]`, `duckdb`, `pydantic` ≈ 14MB sin pyarrow,
-medido con `pip show` + suma de tamaños de `site-packages`) sitúa la
-imagen final en un rango aproximado de 180-220MB, por debajo del límite
-de 300MB. Esta cifra debe confirmarse con `docker images
-transacciones-api:latest` en una máquina con Docker — ver `decisions.md`
-para el detalle de esta limitación.
