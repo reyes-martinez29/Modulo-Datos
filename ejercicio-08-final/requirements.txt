@@ -1,0 +1,14 @@
+# Dependencias de runtime del sistema de monitoreo (E8).
+#
+# Igual que el E7 (sin pyarrow: duckdb trae su propio lector de Parquet),
+# mas python-multipart para recibir el CSV en POST /pipeline/ingest via
+# multipart/form-data.
+#
+# pyyaml se mantiene para --log-config en formato YAML.
+
+fastapi>=0.136.1,<0.137.0
+uvicorn>=0.47.0,<0.50.0
+duckdb>=1.5.2,<2.0.0
+pydantic>=2.0.0,<3.0.0
+python-multipart>=0.0.9,<0.1.0
+pyyaml>=6.0,<7.0

@@ -1,0 +1,39 @@
+  # setup -- copia el historico del Parquet a SQLite (Modelo A) una sola vez.
+  # Idempotente: si DB_PATH ya existe, no hace nada. Crea los indices del E3.
+ services:
+  setup:
+    build:
+      context: ..
+      dockerfile: ejercicio-08-final/Dockerfile
+    image: monitoreo-transacciones:latest
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data:/data
+    entrypoint: ["python", "-u", "scripts/setup.py"]
+    healthcheck:
+      disable: true
+
+  api:
+    build:
+      context: ..
+      dockerfile: ejercicio-08-final/Dockerfile
+    image: monitoreo-transacciones:latest
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+
+# './data' es un bind mount a una carpeta local junto a este archivo. El
+# usuario coloca ahi el Parquet del E1 antes de 'docker compose up --build'.
+# setup genera transactions.db en la misma carpeta; el pipeline escribe la
+# cuarentena en ./data/quarantine. './data' debe ir en .gitignore.
